@@ -3,39 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class AdminAuthController extends Controller
 {
-    // Static admin credentials for demo
-    private $adminUsers = [
+    private $adminCredentials = [
         [
-            'email' => 'admin@aidevstudio.com',
+            'email' => 'admin@business.com',
             'password' => 'admin123',
             'name' => 'System Administrator',
-            'role' => 'Super Admin'
+            'role' => 'Admin'
         ],
         [
-            'email' => 'manager@aidevstudio.com', 
+            'email' => 'manager@business.com',
             'password' => 'manager123',
-            'name' => 'Platform Manager',
+            'name' => 'Business Manager',
             'role' => 'Manager'
         ],
         [
-            'email' => 'support@aidevstudio.com',
-            'password' => 'support123', 
-            'name' => 'Support Lead',
-            'role' => 'Support'
+            'email' => 'supervisor@business.com',
+            'password' => 'supervisor123',
+            'name' => 'Operations Supervisor',
+            'role' => 'Supervisor'
         ]
     ];
 
     public function showLogin()
     {
+        // Check if already logged in
         if (session('admin_logged_in')) {
             return redirect()->route('admin.dashboard');
         }
-        
-        return view('admin.login', ['credentials' => $this->adminUsers]);
+
+        return view('admin.login', [
+            'credentials' => $this->adminCredentials
+        ]);
     }
 
     public function login(Request $request)
@@ -43,23 +44,22 @@ class AdminAuthController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        foreach ($this->adminUsers as $user) {
-            if ($user['email'] === $email && $user['password'] === $password) {
+        foreach ($this->adminCredentials as $admin) {
+            if ($admin['email'] === $email && $admin['password'] === $password) {
                 session([
                     'admin_logged_in' => true,
-                    'admin_user' => $user
+                    'admin_user' => $admin
                 ]);
-                
-                return redirect()->route('admin.dashboard')->with('success', 'Welcome back, ' . $user['name']);
+                return redirect()->route('admin.dashboard');
             }
         }
 
-        return redirect()->route('admin.login')->with('error', 'Invalid credentials. Please check the demo credentials below.');
+        return redirect()->route('admin.login')->with('error', 'Invalid credentials');
     }
 
     public function logout()
     {
         session()->forget(['admin_logged_in', 'admin_user']);
-        return redirect()->route('admin.login')->with('success', 'Logged out successfully');
+        return redirect()->route('admin.login')->with('message', 'Successfully logged out');
     }
 }

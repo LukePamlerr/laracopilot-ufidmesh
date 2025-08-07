@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        // Simple session check
+    }
+
     private function checkAuth()
     {
         if (!session('admin_logged_in')) {
@@ -18,137 +23,109 @@ class AdminController extends Controller
     {
         if ($redirect = $this->checkAuth()) return $redirect;
 
-        $stats = [
-            'total_users' => 12847,
-            'active_projects' => 3291,
-            'ai_generations' => 156742,
-            'github_integrations' => 8934,
-            'monthly_revenue' => 89420,
-            'support_tickets' => 234
+        $data = [
+            'stats' => [
+                ['title' => 'Total Users', 'value' => '2,847', 'change' => '+12%', 'icon' => 'users', 'color' => 'blue'],
+                ['title' => 'Revenue', 'value' => '$48,392', 'change' => '+8%', 'icon' => 'currency', 'color' => 'green'],
+                ['title' => 'Orders', 'value' => '1,429', 'change' => '+23%', 'icon' => 'shopping', 'color' => 'purple'],
+                ['title' => 'Growth', 'value' => '94.2%', 'change' => '+5%', 'icon' => 'chart', 'color' => 'orange']
+            ],
+            'recent_activities' => [
+                ['action' => 'New user registered', 'user' => 'john@example.com', 'time' => '2 minutes ago'],
+                ['action' => 'Order completed', 'user' => 'sarah@example.com', 'time' => '5 minutes ago'],
+                ['action' => 'Payment received', 'user' => 'mike@example.com', 'time' => '10 minutes ago'],
+                ['action' => 'Profile updated', 'user' => 'emma@example.com', 'time' => '15 minutes ago'],
+                ['action' => 'New subscription', 'user' => 'david@example.com', 'time' => '20 minutes ago']
+            ],
+            'chart_data' => [
+                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                'datasets' => [
+                    'revenue' => [12000, 19000, 15000, 25000, 22000, 30000],
+                    'users' => [450, 620, 580, 720, 680, 850]
+                ]
+            ]
         ];
 
-        $recentUsers = [
-            ['name' => 'Alex Johnson', 'email' => 'alex@startup.com', 'plan' => 'Pro', 'joined' => '2 hours ago'],
-            ['name' => 'Maria Garcia', 'email' => 'maria@techcorp.com', 'plan' => 'Enterprise', 'joined' => '5 hours ago'],
-            ['name' => 'David Kim', 'email' => 'david@devstudio.io', 'plan' => 'Starter', 'joined' => '1 day ago'],
-            ['name' => 'Sarah Wilson', 'email' => 'sarah@innovate.co', 'plan' => 'Pro', 'joined' => '2 days ago']
-        ];
-
-        $recentProjects = [
-            ['name' => 'E-commerce Dashboard', 'user' => 'Alex Johnson', 'status' => 'Deployed', 'created' => '3 hours ago'],
-            ['name' => 'Task Management App', 'user' => 'Maria Garcia', 'status' => 'Building', 'created' => '6 hours ago'],
-            ['name' => 'Portfolio Website', 'user' => 'David Kim', 'status' => 'Generated', 'created' => '1 day ago'],
-            ['name' => 'Blog Platform', 'user' => 'Sarah Wilson', 'status' => 'Deployed', 'created' => '2 days ago']
-        ];
-
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'recentProjects'));
+        return view('admin.dashboard', compact('data'));
     }
 
     public function users()
     {
         if ($redirect = $this->checkAuth()) return $redirect;
 
-        $users = [
-            ['id' => 1, 'name' => 'Alex Johnson', 'email' => 'alex@startup.com', 'plan' => 'Pro', 'projects' => 12, 'status' => 'Active', 'joined' => '2023-10-15'],
-            ['id' => 2, 'name' => 'Maria Garcia', 'email' => 'maria@techcorp.com', 'plan' => 'Enterprise', 'projects' => 28, 'status' => 'Active', 'joined' => '2023-09-22'],
-            ['id' => 3, 'name' => 'David Kim', 'email' => 'david@devstudio.io', 'plan' => 'Starter', 'projects' => 5, 'status' => 'Active', 'joined' => '2023-11-01'],
-            ['id' => 4, 'name' => 'Sarah Wilson', 'email' => 'sarah@innovate.co', 'plan' => 'Pro', 'projects' => 18, 'status' => 'Suspended', 'joined' => '2023-08-30']
+        $data = [
+            'stats' => [
+                ['title' => 'Total Users', 'value' => '2,847', 'color' => 'blue'],
+                ['title' => 'Active Today', 'value' => '1,429', 'color' => 'green'],
+                ['title' => 'New This Month', 'value' => '324', 'color' => 'purple'],
+                ['title' => 'Inactive', 'value' => '127', 'color' => 'red']
+            ],
+            'users' => [
+                ['id' => 1, 'name' => 'John Smith', 'email' => 'john@example.com', 'role' => 'Admin', 'status' => 'Active', 'joined' => '2024-01-15'],
+                ['id' => 2, 'name' => 'Sarah Johnson', 'email' => 'sarah@example.com', 'role' => 'User', 'status' => 'Active', 'joined' => '2024-01-20'],
+                ['id' => 3, 'name' => 'Mike Wilson', 'email' => 'mike@example.com', 'role' => 'Moderator', 'status' => 'Active', 'joined' => '2024-01-25'],
+                ['id' => 4, 'name' => 'Emma Davis', 'email' => 'emma@example.com', 'role' => 'User', 'status' => 'Inactive', 'joined' => '2024-02-01'],
+                ['id' => 5, 'name' => 'David Brown', 'email' => 'david@example.com', 'role' => 'User', 'status' => 'Active', 'joined' => '2024-02-05']
+            ]
         ];
 
-        $userStats = [
-            'total' => 12847,
-            'active' => 11203,
-            'pro' => 3421,
-            'enterprise' => 892
-        ];
-
-        return view('admin.users', compact('users', 'userStats'));
-    }
-
-    public function projects()
-    {
-        if ($redirect = $this->checkAuth()) return $redirect;
-
-        $projects = [
-            ['id' => 1, 'name' => 'E-commerce Dashboard', 'user' => 'Alex Johnson', 'type' => 'Web App', 'status' => 'Deployed', 'github_url' => 'https://github.com/alex/ecommerce-dash', 'created' => '2023-11-15'],
-            ['id' => 2, 'name' => 'Task Management App', 'user' => 'Maria Garcia', 'type' => 'SaaS', 'status' => 'Building', 'github_url' => 'https://github.com/maria/task-manager', 'created' => '2023-11-14'],
-            ['id' => 3, 'name' => 'Portfolio Website', 'user' => 'David Kim', 'type' => 'Website', 'status' => 'Generated', 'github_url' => 'https://github.com/david/portfolio', 'created' => '2023-11-13'],
-            ['id' => 4, 'name' => 'Blog Platform', 'user' => 'Sarah Wilson', 'type' => 'CMS', 'status' => 'Deployed', 'github_url' => 'https://github.com/sarah/blog-platform', 'created' => '2023-11-12']
-        ];
-
-        return view('admin.projects', compact('projects'));
-    }
-
-    public function integrations()
-    {
-        if ($redirect = $this->checkAuth()) return $redirect;
-
-        $integrations = [
-            'chatgpt' => ['status' => 'Connected', 'usage' => '156,742 requests', 'last_sync' => '2 minutes ago'],
-            'github' => ['status' => 'Connected', 'repos' => '25,847 repositories', 'last_sync' => '5 minutes ago'],
-            'supabase' => ['status' => 'Connected', 'databases' => '8,934 databases', 'last_sync' => '1 minute ago']
-        ];
-
-        return view('admin.integrations', compact('integrations'));
-    }
-
-    public function billing()
-    {
-        if ($redirect = $this->checkAuth()) return $redirect;
-
-        $revenue = [
-            'monthly' => 89420,
-            'annual' => 1072000,
-            'growth' => 15.3
-        ];
-
-        $subscriptions = [
-            ['plan' => 'Starter', 'users' => 8534, 'revenue' => 25602, 'price' => '$9/month'],
-            ['plan' => 'Pro', 'users' => 3421, 'revenue' => 51315, 'price' => '$29/month'],
-            ['plan' => 'Enterprise', 'users' => 892, 'revenue' => 26760, 'price' => '$99/month']
-        ];
-
-        return view('admin.billing', compact('revenue', 'subscriptions'));
-    }
-
-    public function analytics()
-    {
-        if ($redirect = $this->checkAuth()) return $redirect;
-
-        $analytics = [
-            'page_views' => 245672,
-            'unique_visitors' => 45891,
-            'bounce_rate' => 23.4,
-            'avg_session' => '4m 32s'
-        ];
-
-        return view('admin.analytics', compact('analytics'));
-    }
-
-    public function support()
-    {
-        if ($redirect = $this->checkAuth()) return $redirect;
-
-        $tickets = [
-            ['id' => 1, 'subject' => 'GitHub integration not working', 'user' => 'alex@startup.com', 'priority' => 'High', 'status' => 'Open', 'created' => '2 hours ago'],
-            ['id' => 2, 'subject' => 'Billing question about Pro plan', 'user' => 'maria@techcorp.com', 'priority' => 'Medium', 'status' => 'In Progress', 'created' => '5 hours ago'],
-            ['id' => 3, 'subject' => 'Feature request: Custom templates', 'user' => 'david@devstudio.io', 'priority' => 'Low', 'status' => 'Closed', 'created' => '1 day ago']
-        ];
-
-        return view('admin.support', compact('tickets'));
+        return view('admin.users', compact('data'));
     }
 
     public function settings()
     {
         if ($redirect = $this->checkAuth()) return $redirect;
 
-        $settings = [
-            'site_name' => 'AI DevStudio',
-            'maintenance_mode' => false,
-            'new_registrations' => true,
-            'email_notifications' => true
+        $data = [
+            'general_settings' => [
+                'site_name' => 'Business Platform',
+                'site_description' => 'Modern business management solution',
+                'contact_email' => 'contact@business.com',
+                'support_email' => 'support@business.com',
+                'timezone' => 'UTC',
+                'language' => 'English'
+            ],
+            'notification_settings' => [
+                'email_notifications' => true,
+                'sms_notifications' => false,
+                'push_notifications' => true,
+                'marketing_emails' => true
+            ],
+            'security_settings' => [
+                'two_factor_auth' => true,
+                'session_timeout' => '30 minutes',
+                'password_expiry' => '90 days',
+                'login_attempts' => '5'
+            ]
         ];
 
-        return view('admin.settings', compact('settings'));
+        return view('admin.settings', compact('data'));
+    }
+
+    public function reports()
+    {
+        if ($redirect = $this->checkAuth()) return $redirect;
+
+        $data = [
+            'report_stats' => [
+                ['title' => 'Total Reports', 'value' => '156', 'color' => 'blue'],
+                ['title' => 'This Month', 'value' => '42', 'color' => 'green'],
+                ['title' => 'Pending Review', 'value' => '8', 'color' => 'orange'],
+                ['title' => 'Resolved', 'value' => '134', 'color' => 'purple']
+            ],
+            'recent_reports' => [
+                ['id' => 1, 'title' => 'Monthly Sales Report', 'type' => 'Sales', 'status' => 'Completed', 'date' => '2024-01-15', 'size' => '2.4 MB'],
+                ['id' => 2, 'title' => 'User Activity Analysis', 'type' => 'Analytics', 'status' => 'Processing', 'date' => '2024-01-14', 'size' => '1.8 MB'],
+                ['id' => 3, 'title' => 'Financial Summary Q1', 'type' => 'Financial', 'status' => 'Completed', 'date' => '2024-01-13', 'size' => '3.2 MB'],
+                ['id' => 4, 'title' => 'Customer Feedback Report', 'type' => 'Feedback', 'status' => 'Pending', 'date' => '2024-01-12', 'size' => '1.5 MB'],
+                ['id' => 5, 'title' => 'System Performance Log', 'type' => 'Technical', 'status' => 'Completed', 'date' => '2024-01-11', 'size' => '4.1 MB']
+            ],
+            'chart_data' => [
+                'labels' => ['Sales', 'Analytics', 'Financial', 'Feedback', 'Technical'],
+                'data' => [35, 28, 22, 18, 15]
+            ]
+        ];
+
+        return view('admin.reports', compact('data'));
     }
 }
